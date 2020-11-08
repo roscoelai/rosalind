@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Nov  8 15:30:53 2020
-
-@author: LAIZYR
-"""
+#!/usr/bin/env python3
 
 #%%
 from collections import Counter, deque
