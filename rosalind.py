@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+# rosalind.py
 
-#%%
+#%% import-libraries
 from collections import Counter, deque
 from functools import lru_cache
 
+#%% define-functions
 def dna(s):
     c = Counter(s)
     return "{} {} {} {}".format(c['A'], c['C'], c['G'], c['T'])
@@ -39,9 +41,42 @@ def iprb(k, m, n):
     return "{:.5f}".format(num / den)
 
 def prot(s):
-    pass
+    codon_table = {
+        "UUU": 'F', "CUU": 'L', "AUU": 'I', "GUU": 'V',
+        "UUC": 'F', "CUC": 'L', "AUC": 'I', "GUC": 'V',
+        "UUA": 'L', "CUA": 'L', "AUA": 'I', "GUA": 'V',
+        "UUG": 'L', "CUG": 'L', "AUG": 'M', "GUG": 'V',
+        "UCU": 'S', "CCU": 'P', "ACU": 'T', "GCU": 'A',
+        "UCC": 'S', "CCC": 'P', "ACC": 'T', "GCC": 'A',
+        "UCA": 'S', "CCA": 'P', "ACA": 'T', "GCA": 'A',
+        "UCG": 'S', "CCG": 'P', "ACG": 'T', "GCG": 'A',
+        "UAU": 'Y', "CAU": 'H', "AAU": 'N', "GAU": 'D',
+        "UAC": 'Y', "CAC": 'H', "AAC": 'N', "GAC": 'D',
+        "UAA": '', "CAA": 'Q', "AAA": 'K', "GAA": 'E',
+        "UAG": '', "CAG": 'Q', "AAG": 'K', "GAG": 'E',
+        "UGU": 'C', "CGU": 'R', "AGU": 'S', "GGU": 'G',
+        "UGC": 'C', "CGC": 'R', "AGC": 'S', "GGC": 'G',
+        "UGA": '', "CGA": 'R', "AGA": 'R', "GGA": 'G',
+        "UGG": 'W', "CGG": 'R', "AGG": 'R', "GGG": 'G'
+    }
+    codons = (s[i:i + 3] for i in range(0, len(s), 3))
+    return ''.join(codon_table[codon] for codon in codons)
 
-if __name__ == "__main__":
+def subs(s1, s2):
+    ii = range(len(s1) - len(s2))
+    ns2 = len(s2)
+    return ' '.join(str(i + 1) for i in ii if s1[i:i + ns2] == s2)
+
+#%% tinkering...
+def cons(s):
+    d = deque(s.split('>'))
+    d.popleft()
+    kv = (x.split('\n', 1) for x in d)
+    kv = ((k, ''.join(v.split())) for k, v in kv)
+    return dict(kv)
+
+#%% main
+def main():
     # print(dna(""))
     # print(dna("A"))
     # print(dna("C"))
@@ -70,4 +105,26 @@ if __name__ == "__main__":
     
     # print(iprb(2, 2, 2))
     
-    print(prot("AUGGCCAUGGCGCCCAGAACUGAGAUCAAUAGUACCCGUAUUAACGGGUGA"))
+    # print(prot("AUGGCCAUGGCGCCCAGAACUGAGAUCAAUAGUACCCGUAUUAACGGGUGA"))
+    
+    # print(subs("GATATATGCATATACTT", "ATAT"))
+    
+    print(cons(""">Rosalind_1
+ATCCAGCT
+>Rosalind_2
+GGGCAACT
+>Rosalind_3
+ATGGATCT
+>Rosalind_4
+AAGCAACC
+>Rosalind_5
+TTGGAACT
+>Rosalind_6
+ATGCCATT
+>Rosalind_7
+ATGGCACT"""))
+
+if __name__ == "__main__":
+    main()
+
+

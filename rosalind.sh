@@ -1,4 +1,5 @@
 #!/bin/bash
+# rosalind.sh
 
 # dna0() {
 #     # Fails edge cases
