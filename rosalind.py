@@ -2,6 +2,7 @@
 # rosalind.py
 
 #%% import-libraries
+import time
 from collections import Counter, deque
 from functools import lru_cache
 
@@ -28,8 +29,8 @@ def gc(s):
     d = deque(s.split('>'))
     d.popleft()
     kv = (x.split('\n', 1) for x in d)
-    kv = ((k, ''.join(v.split())) for k, v in kv)
-    kp = ((k, (v.count('C') + v.count('G')) / len(v) * 100) for k, v in kv)
+    kv = ((k, Counter(''.join(v.split()))) for k, v in kv)
+    kp = ((k, (c['C'] + c['G']) / sum(c.values()) * 100) for k, c in kv)
     return "{}\n{:.6f}".format(*max(kp, key=lambda x: x[1]))
 
 def hamm(s1, s2):
@@ -67,16 +68,59 @@ def subs(s1, s2):
     ns2 = len(s2)
     return ' '.join(str(i + 1) for i in ii if s1[i:i + ns2] == s2)
 
-#%% tinkering...
 def cons(s):
     d = deque(s.split('>'))
     d.popleft()
     kv = (x.split('\n', 1) for x in d)
+    dnas = [list(''.join(v.split())) for k, v in kv]
+    
+    m = len(dnas[0])
+    ref = dict(zip("ACGT", range(4)))
+    mat = [[0] * m for i in range(4)]
+    
+    for i, dna in enumerate(dnas):
+        for j, c in enumerate(dna):
+            mat[ref[c]][j] += 1
+    
+    mat = (' '.join(map(str, x)) for x in mat)
+    mat = ("{}: {}".format(x, y) for x, y in zip("ACGT", mat))
+    
+    res = [''.join(Counter(col).most_common(1)[0][0] for col in zip(*dnas))]
+    res.extend(mat)
+    
+    return '\n'.join(res)
+
+@lru_cache
+def fibd(n, m):
+    if n < 3:
+        return 1
+    if m < 1:
+        m = 1
+    if m < 3:
+        return m - 1
+    
+    if n < m:
+        return fibd(n - 1, m) + fibd(n - 2, m)
+    else:
+        acc = 0
+        for i in range(m - 1):
+            acc += fibd(n - 2 - i, m)
+        return acc
+
+#%% tinkering...
+def grph(s, k=3):
+    d = deque(s.split('>'))
+    d.popleft()
+    kv = (x.split('\n', 1) for x in d)
     kv = ((k, ''.join(v.split())) for k, v in kv)
-    return dict(kv)
+    
+    kv = [*kv]
+    print(kv)
 
 #%% main
 def main():
+    t1 = time.perf_counter()
+    
     # print(dna(""))
     # print(dna("A"))
     # print(dna("C"))
@@ -109,20 +153,36 @@ def main():
     
     # print(subs("GATATATGCATATACTT", "ATAT"))
     
-    print(cons(""">Rosalind_1
-ATCCAGCT
->Rosalind_2
-GGGCAACT
->Rosalind_3
-ATGGATCT
->Rosalind_4
-AAGCAACC
->Rosalind_5
-TTGGAACT
->Rosalind_6
-ATGCCATT
->Rosalind_7
-ATGGCACT"""))
+#     print(cons(""">Rosalind_1
+# ATCCAGCT
+# >Rosalind_2
+# GGGCAACT
+# >Rosalind_3
+# ATGGATCT
+# >Rosalind_4
+# AAGCAACC
+# >Rosalind_5
+# TTGGAACT
+# >Rosalind_6
+# ATGCCATT
+# >Rosalind_7
+# ATGGCACT"""))
+    
+    # print(fibd(6, 3))
+    
+    print(grph(""">Rosalind_0498
+AAATAAA
+>Rosalind_2391
+AAATTTT
+>Rosalind_2323
+TTTTCCC
+>Rosalind_0442
+AAATCCC
+>Rosalind_5013
+GGGTGGG"""))
+    
+    t2 = time.perf_counter()
+    print("Time taken: {:.6f} sec".format(t2 - t1))
 
 if __name__ == "__main__":
     main()
