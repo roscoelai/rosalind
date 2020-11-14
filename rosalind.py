@@ -17,6 +17,7 @@ def rna(s):
 def revc(s):
     return s.translate(str.maketrans("ACGT", "TGCA"))[::-1]
 
+# TODO: fast fibonacci
 @lru_cache
 def fib(n, k):
     if n < 3:
@@ -90,6 +91,7 @@ def cons(s):
     
     return '\n'.join(res)
 
+# TODO: fast fibonacci
 @lru_cache
 def fibd(n, m):
     if n < 3:
@@ -107,15 +109,41 @@ def fibd(n, m):
             acc += fibd(n - 2 - i, m)
         return acc
 
-#%% tinkering...
 def grph(s, k=3):
     d = deque(s.split('>'))
     d.popleft()
     kv = (x.split('\n', 1) for x in d)
     kv = ((k, ''.join(v.split())) for k, v in kv)
-    
     kv = [*kv]
-    print(kv)
+    
+    res = []
+    for i in range(len(kv)):
+        k1, v1 = kv[i]
+        for j in range(i + 1, len(kv)):
+            k2, v2 = kv[j]
+            if v1[-k:] == v2[:k]:
+                res.append("{} {}".format(k1, k2))
+    
+    return '\n'.join(res)
+
+def iev(s):
+    ngenotypes = map(int, s.split())
+    pgenotypes = (1, 1, 1, 0.75, 0.5, 0)
+    noffspring = 2
+    return sum(x * y for x, y in zip(ngenotypes, pgenotypes)) * noffspring
+
+#%% tinkering...
+def lcsm(s):
+    d = deque(s.split('>'))
+    d.popleft()
+    kv = (x.split('\n', 1) for x in d)
+    kv = ((k, ''.join(v.split())) for k, v in kv)
+    
+    # Find longest common substring
+    
+    
+    res = [*kv]
+    return res
 
 #%% main
 def main():
@@ -170,16 +198,25 @@ def main():
     
     # print(fibd(6, 3))
     
-    print(grph(""">Rosalind_0498
-AAATAAA
->Rosalind_2391
-AAATTTT
->Rosalind_2323
-TTTTCCC
->Rosalind_0442
-AAATCCC
->Rosalind_5013
-GGGTGGG"""))
+#     print(grph(""">Rosalind_0498
+# AAATAAA
+# >Rosalind_2391
+# AAATTTT
+# >Rosalind_2323
+# TTTTCCC
+# >Rosalind_0442
+# AAATCCC
+# >Rosalind_5013
+# GGGTGGG"""))
+    
+    # print(iev("1 0 0 1 0 1"))
+    
+    print(lcsm(""">Rosalind_1
+GATTACA
+>Rosalind_2
+TAGACCA
+>Rosalind_3
+ATACA"""))
     
     t2 = time.perf_counter()
     print("Time taken: {:.6f} sec".format(t2 - t1))

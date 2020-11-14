@@ -139,6 +139,20 @@ GGGTGGG"""
 Rosalind_0498 Rosalind_0442
 Rosalind_2391 Rosalind_2323"""
         self.assertEqual(f(s), r)
+    
+    def test_iev(self):
+        f = rosalind.iev
+        self.assertEqual(f("1 0 0 1 0 1"), 3.5)
+    
+    def test_lcsm(self):
+        f = rosalind.lcsm
+        s = """>Rosalind_1
+GATTACA
+>Rosalind_2
+TAGACCA
+>Rosalind_3
+ATACA"""
+        self.assertEqual(f(s), "AC")
 
 if __name__ == "__main__":
     unittest.main()
